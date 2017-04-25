@@ -1,0 +1,37 @@
+
+At the date of publication this license represents out best efforts 
+at providing appropriate licensing terms as specified below.
+If you have any concerns or suggestions please contact 
+Joshua.Hurst.rpi@gmail.com 
+so we modify the distribution accordingly.
+
+The code in RASLib is distributed under the GNU General Public
+License with an exception added to clarify our intention to allow
+RASLib to interface with MATLAB(R) as well as any other MATLAB code
+or MEX-files a user may have installed, regardless of their licensing
+terms. The full text of the GPL can be found in the COPYING file
+at the top level of the RASLib distribution.
+
+The following is the official license notice which should appear in
+each source file.
+
+    RASLib is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published
+    by the Free Software Foundation, either version 3 of the License,
+    or (at your option) any later version.
+ 
+    RASLib is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with RASLib. If not, see <http://www.gnu.org/licenses/>.
+ 
+    Additional permission under GNU GPL version 3 section 7
+ 
+    If you modify RASLib, or any covered work, to interface with
+    other modules (such as MATLAB code and MEX-files) available in a
+    MATLAB(R) or comparable environment containing parts covered
+    under other licensing terms, the licensors of RASLib grant
+    you additional permission to convey the resulting work.

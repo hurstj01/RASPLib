@@ -1,0 +1,24 @@
+A Simulink Arduino toolbox with blocks for: quadrature encoder, compass/magnetometer, barometer, temperature, accelerometer, gyroscope, driver amplifier (DC motor driver), and simple serial communication and plotting tools.
+
+Supported I2C Sensors: MPU6050, MPU9250, HMC5883, BMP280, MS5611 (commonly found on GY-521, GY-271, GY-91, GY-87)
+
+Examples are provided for basic hardware IO, step response and closed loop control of an Lego NXT motor.
+
+Download includes basic curriculum labs describing the following:
+- Simulink Arduino Intro Blinking LED
+- RASPlib Installation Instructions
+- Analog and Encoder input, and PWM output
+- Gyroscope Reading and Calibrating
+- Magnetometer - Making a Compass 
+- Serial Communication Basics 
+- Bluetooth Communication 
+- DC Motor Step Response 
+- Realistic DC Motor Simulation 
+- Basic DC Motor Control 
+- Realistic PI Controller Simulation 
+- DC Motor Parameter ID 
+- Determining Angle with Complimentary Filter 
+- Basic Balancing Lab 
+- Ultrasonic Distance Sensor
+
+Labs are draft labs.  Please contact with suggestions or help before leaving negative feedback.  

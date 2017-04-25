@@ -1,0 +1,37 @@
+11-11-2016
+- lookup option for motor drivers to correct nonlinearities in output (common of darling type h bridges)
+- encoders are hard coded to specific pins to allow direct reading of the pin port. DigitalRead() is significantly slower (20-30x) and can cause microprocessor satureation for high resolution encoders or fast motors
+- PWM frequency selection is enabled on the encoder blocks
+- Driver block is simplified and improved for faster execution
+- Driver blocks have all been modified so a positive voltage produces a positive direction from the encoders
+- SerialPlot.m is modified to scale correctly for numbers less than 1.  Graphing and autoscaling has been improved.  
+
+
+V1.08312016.2015a
+Changed SerialPlot.ma
+	- added automatic autoscale up to the full window witdth, then it must be manual autoscaled with the button
+	- removed the popup about trying to connect to the com port
+	- the for loop now adjust the number of samples read/displayed so it refreshes approximately 50 times a second
+Removed M1V3 and MinsegMegaV3 since they are not currently made
+replaces PWM44, PWM45, PWM46 Sfunctions from MinSegMega Library with the default Arduino PWM Block
+removed the "signed PWM" blocks from library since they are redundant with the Motor Driver blocks (same except for a gain to voltage)
+
+Transition from S-Funcitons to System Objects
+
+
+V1.02032016.2015a
+Important: The file/folder structure has changed - this is to begin support of matlab objects to replace s-functions for more universal support (mac)
+currently the root folder 'RASPlib', and the and the 'sfunction_blocks' folder are are that are required.  the 'blocks', 'src', and 'include' folders are in support of new implementaiton and may be deleted by the user if desired.  
+
+Users interested in the new object based version, or mac users who wish to test this functinality and report back are welcome to try the
+'MinSegShield_Demo_M1V4_15a.slx' demo which uses the object based version of some of the s-functions.
+
+Updated library and links for 2015a - oldver versions of simulink the library might have components/block move or become unorganized - it should not affect functinality but visual arrangement of the blocks might be moved
+
+Multiple libray changes have taken place to fix bugs, functinality usability of several blocks.  Apologies for a lack of a list of specific changes.
+
+V1.01
+SerialPlot.m - modified to automatically adjust the number of samples read so the refresh rate of the graph is 30hz.
+
+V1.1 
+Added some missing mex files for various blocks
