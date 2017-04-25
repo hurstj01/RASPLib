@@ -1,8 +1,12 @@
+Title: Rensselaer Arduino Support Package Library (RASPLib)
+
+Summary: Simulink sensor and motor driver library for Arduino
+
 A Simulink Arduino toolbox with blocks for: quadrature encoder, compass/magnetometer, barometer, temperature, accelerometer, gyroscope, driver amplifier (DC motor driver), and simple serial communication and plotting tools.
 
 Supported I2C Sensors: MPU6050, MPU9250, HMC5883, BMP280, MS5611 (commonly found on GY-521, GY-271, GY-91, GY-87)
 
-Examples are provided for basic hardware IO, step response and closed loop control of an Lego NXT motor.
+Examples are provided for basic hardware IO, step response and closed loop control of an Lego NXT motor. 
 
 Download includes basic curriculum labs describing the following:
 - Simulink Arduino Intro Blinking LED
@@ -21,4 +25,14 @@ Download includes basic curriculum labs describing the following:
 - Basic Balancing Lab 
 - Ultrasonic Distance Sensor
 
-Labs are draft labs.  Please contact with suggestions or help before leaving negative feedback.  
+Labs are draft labs.  Please contact with suggestions or help before leaving negative feedback. 
+
+Tested Matlab Versions 2015a-2017a
+
+Required Products:
+MATLAB, Simulink
+
+Other Requirements:
+Simulink Support Package For Arduino Hardware
+
+Tags: Simulink, Arduino, Device Driver, Quadrature Encoder, Encoder,  compass, magnetometer, barometer, temperature, accelerometer, gyroscope, driver amplifier, amplifier, DC motor, DC motor driver, MPU6050, MPU9250, HMC5883, BMP280, MS5611, GY-521, GY-271, GY-91, GY-87, Mechatronics, RASPLib, Arduino Support Package, Control, Closed Loop, Motor Control, Feedback Control, Balance Robot, Balance, Complementary Filter
