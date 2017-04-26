@@ -1,8 +1,6 @@
-﻿Graphical installation instructions are given in the included PDF (Lab 1 and Lab 1a)
+﻿
 
-
-
-Rensselaer Arduino Support Package - RASPlib installation Instructions:
+Rensselaer Arduino Support Package Library (RASPlib) installation Instructions:
 
 
 
@@ -11,6 +9,8 @@ Prerequisite:
 - Arduino Support package for Simulink has been installed  (see Lab 1)
 
 
+
+Graphical installation instructions are given in the included PDF (Lab 1 and Lab 1a)
 
 1.Unzip the contents and copy the “RASPlib” folder and ‘startup.m’ file to your home Matlab directory (for example C:\Users\hurstj\Documents\MATLAB  -  you could all the contents there if desired)
 
