@@ -1,3 +1,12 @@
+6-6-2016
+- added PWM frequncy selection blocks (necessary for Magnetic Levitiation kit)
+- added BMP180 barometer driver
+- added support for MinSegNano a Ardunio nano based shield, and MinSegPro another Arduino mega based board
+- added support for MinSegShield M1V5 a DRV8833 based motor driver shield
+- added instructions to use the HCSR04 ultrasonic sensor driver block for 2015b or later
+- various small bugs and fixes
+
+
 11-11-2016
 - lookup option for motor drivers to correct nonlinearities in output (common of darling type h bridges)
 - encoders are hard coded to specific pins to allow direct reading of the pin port. DigitalRead() is significantly slower (20-30x) and can cause microprocessor satureation for high resolution encoders or fast motors

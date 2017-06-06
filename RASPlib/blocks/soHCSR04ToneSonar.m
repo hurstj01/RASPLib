@@ -1,5 +1,5 @@
-classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
-    % soHCSR04Sonar sonar distance sensor.  To use with 2015b or later try these workaround instructions (at your own risk).  1. Temporary remove the complete line: <sourcefile>----  Tone.cpp<sourcefile> in ArduinoMega2560_attributes.xml which is located in C:\ProgramData\MATLAB\SupportPackages\R2016b\toolbox\target\supportpackages\arduinotarget\registry\attributes.  (Back up this file before making any changes - do not put any files in thie directory)  2.) run the following 3 commands in the matlab prompt: clear classes, rehash toolboxcache, sl_refresh_customizations  3.) open your Simulink model (in this case "sonar.slx"). Go to "Configuration Parameters --> Hardware Implementation " and reselect the "Hardware board" to "Arduino Mega".  You MUST do this. 4.) add the line you removed from  ArduinoMega2560_attributes.xml back (or restore the backup file).  This excludes Tone.cpp, but keeps the file content intact there so it will compile.  May/May not work....
+classdef soHCSR04ToneSonar < matlab.System & coder.ExternalDependency
+    % soHCSR04Sonar sonar distance sensor
     % 
     %
     
@@ -81,7 +81,7 @@ classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
     methods (Access = protected)
         function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
-                coder.cinclude('HCSR04wrapper.h');
+                coder.cinclude('HCSR04Tonewrapper.h');
                 % initialize the potentiometer
                 coder.ceval('HCSR04Sonar_Init', obj.TrigPin, obj.EchoPin);
 				% coder.ceval('NewPing sonar(7,8,200);');
@@ -94,9 +94,9 @@ classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
             % initialize output to a single (float) with the value zero
             out = single(zeros(1,1));
             if coder.target('Rtw')% done only for code gen
-                coder.cinclude('HCSR04wrapper.h');
+                coder.cinclude('HCSR04Tonewrapper.h');
                 % get the current value of the sensor
-                coder.ceval('HCSR04Sonar_Read', coder.wref(out));
+                coder.ceval('HCSR04Sonar_Read', coder.wref(out), obj.TrigPin, obj.EchoPin);
             elseif ( coder.target('Sfun') )
                 %
             end
@@ -157,15 +157,18 @@ classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
                 buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','utility'));
                 buildInfo.addIncludePaths(fullfile(current_dir,'..','include'));
                 
+                buildInfo.addIncludePaths('C:/ProgramData/MATLAB/SupportPackages/R2017a/3P.instrset/arduinoide.instrset/arduino-1.6.13/hardware/arduino/avr/cores/arduino/')
+                
                 % add the source paths
                 srcPaths = {...
                     fullfile(librarydir, 'Wire'), ...
                     fullfile(librarydir, 'Wire', 'utility'),...
-                    fullfile(current_dir,'..','src')};
+                    fullfile(current_dir,'..','src'),...
+                    'C:/ProgramData/MATLAB/SupportPackages/R2017a/3P.instrset/arduinoide.instrset/arduino-1.6.13/hardware/arduino/avr/cores/arduino/'};
                 buildInfo.addSourcePaths(srcPaths);
                 
                 % add the source files
-                srcFiles = {'NewPing.cpp', 'HCSR04wrapper.cpp'};
+                srcFiles = {'HCSR04Tonewrapper.cpp'};
                 buildInfo.addSourceFiles(srcFiles);
                 
             end

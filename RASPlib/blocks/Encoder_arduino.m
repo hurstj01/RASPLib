@@ -195,7 +195,7 @@ classdef Encoder_arduino < matlab.System ...
         function updateBuildInfo(buildInfo, context)
             if context.isCodeGenTarget('rtw')
                 %  Update buildInfo
-                rootDir = fullfile(fileparts(mfilename('fullpath')),'..','src')
+                rootDir = fullfile(fileparts(mfilename('fullpath')),'..','src');
                 buildInfo.addIncludePaths(rootDir);
                 buildInfo.addIncludePaths(fullfile(fileparts(mfilename('fullpath')),'..','include'));
 				buildInfo.addIncludeFiles('encoder_arduino.h');
