@@ -1,11 +1,17 @@
-6-6-2016
-- added PWM frequncy selection blocks (necessary for Magnetic Levitiation kit)
-- added BMP180 barometer driver
-- added support for MinSegNano a Ardunio nano based shield, and MinSegPro another Arduino mega based board
-- added support for MinSegShield M1V5 a DRV8833 based motor driver shield
-- added instructions to use the HCSR04 ultrasonic sensor driver block for 2015b or later
-- various small bugs and fixes
 
+9-15-2018
+- added functinality for serial plot to log/plot multiple channels.  This is useful for boards external mode is not supported (nano) or you need very fast data transfer.  
+- added support for BMI160 Gyroscope Accelerometer. This is a good alternative to MPU6050 if noisy motors stop your applicaiton when trying to read MPU6050 (I2C line can hang).  BMI160 seems to be more robust to noise. 
+- fixed system objects to be compatible with 2018a
+
+6-6-2017
+added:
+- PWM frequency selection blocks (for Magnetic Levitation kits)
+- BMP180 barometer driver
+- support MinSegNano, MinSegPro, and MinSegShield M1V5 
+- HCSR04 ultrasonic driver workaround for 2015b or later
+
+minor bugs and fixes
 
 11-11-2016
 - lookup option for motor drivers to correct nonlinearities in output (common of darling type h bridges)

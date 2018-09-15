@@ -71,6 +71,9 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
                 case 5:
                     TCCR5B=TCCR5B & 0b11111000 | 0x01;
                     break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
+                    break;
                 default:
                     break;
             }
@@ -81,19 +84,22 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x02;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x02;
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
                     break;
                 case 3:
-                    TCCR3B=TCCR3B & 0b11111000 | 0x02;
+                    TCCR3B=TCCR3B & 0b11111000 | 0x01;
                     break;
                 case 4:
-                    TCCR4B=TCCR4B & 0b11111000 | 0x02;
+                    TCCR4B=TCCR4B & 0b11111000 | 0x01;
                     break;
                 case 5:
-                    TCCR5B=TCCR5B & 0b11111000 | 0x02;
+                    TCCR5B=TCCR5B & 0b11111000 | 0x01;
+                    break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 default:
                     break;
@@ -105,19 +111,22 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x03;
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
                     break;
                 case 3:
-                    TCCR3B=TCCR3B & 0b11111000 | 0x03;
+                    TCCR3B=TCCR3B & 0b11111000 | 0x01;
                     break;
                 case 4:
-                    TCCR4B=TCCR4B & 0b11111000 | 0x03;
+                    TCCR4B=TCCR4B & 0b11111000 | 0x01;
                     break;
                 case 5:
-                    TCCR5B=TCCR5B & 0b11111000 | 0x03;
+                    TCCR5B=TCCR5B & 0b11111000 | 0x01;
+                    break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 default:
                     break;
@@ -129,19 +138,22 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x04;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x04;
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
                     break;
                 case 3:
-                    TCCR3B=TCCR3B & 0b11111000 | 0x04;
+                    TCCR3B=TCCR3B & 0b11111000 | 0x01;
                     break;
                 case 4:
-                    TCCR4B=TCCR4B & 0b11111000 | 0x04;
+                    TCCR4B=TCCR4B & 0b11111000 | 0x01;
                     break;
                 case 5:
-                    TCCR5B=TCCR5B & 0b11111000 | 0x04;
+                    TCCR5B=TCCR5B & 0b11111000 | 0x01;
+                    break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 default:
                     break;
@@ -153,43 +165,50 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x05;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x05;
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
                     break;
                 case 3:
-                    TCCR3B=TCCR3B & 0b11111000 | 0x05;
+                    TCCR3B=TCCR3B & 0b11111000 | 0x01;
                     break;
                 case 4:
-                    TCCR4B=TCCR4B & 0b11111000 | 0x05;
+                    TCCR4B=TCCR4B & 0b11111000 | 0x01;
                     break;
                 case 5:
-                    TCCR5B=TCCR5B & 0b11111000 | 0x05;
+                    TCCR5B=TCCR5B & 0b11111000 | 0x01;
+                    break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 default:
                     break;
             }
             break;
-            
+			
+        
             
         default:
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x03;
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
                     break;
                 case 3:
-                    TCCR3B=TCCR3B & 0b11111000 | 0x03;
+                    TCCR3B=TCCR3B & 0b11111000 | 0x01;
                     break;
                 case 4:
-                    TCCR4B=TCCR4B & 0b11111000 | 0x03;
+                    TCCR4B=TCCR4B & 0b11111000 | 0x01;
                     break;
                 case 5:
-                    TCCR5B=TCCR5B & 0b11111000 | 0x03;
+                    TCCR5B=TCCR5B & 0b11111000 | 0x01;
+                    break;
+				case 6: 
+					TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 default:
                     break;

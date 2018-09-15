@@ -1,9 +1,10 @@
-function  SerialPlot(COMport, DataType, NumSamples, BaudRate)
+function  SerialPlot(COMport, DataType, NumSamples, BaudRate, Ncx)
 %SerialPlot(get_param(gcb,'COMport'), get_param(gcb,'DataType'), get_param(gcb,'NumSamples'), get_param(gcb,'BaudRate'))
-% NumSamples=2000;
+% NumSamples=500;
 % DataType='single';
-% COMport='COM40'
-% BaudRate=115200
+% COMport='COM28'
+% BaudRate=115200;
+% Ncx=3;  % number of muxed data types for multiple channel data
 % clc
 
 %% get the sample time of the model
@@ -20,7 +21,6 @@ catch,
         model_sample_time=.005; % guess a sample time if not model is available
         est_sample_time=1;
     end
-    
 end
 
 % refesh plot 50 times a second, or as fast as possible
@@ -42,70 +42,131 @@ s = serial(COMport);
 set(s, 'ByteOrder', 'bigEndian','BaudRate', BaudRate);
 fopen(s);
 
-%% find start of data by waiting for ***starting the model***
-istring=[];  % initial string to find/sync start of data
-for i=1:60
-    d1=char(fread(s, 1, 'uint8'));
-    istring=[istring d1];
-    % if you find the complete starting string
-    % ready 2 bytes then move on
-    % only data is following
-    istring_found=strfind(istring,'***starting the model***');
-    if(istring_found),d1=char(fread(s, 2, 'uint8')); break, end
+a=ver;
+if(str2num(a(1).Release(3:6))>=2017)
+    % then there is no initialization string in the serial connection
+    % the data starts right away, noting to do
+else
+    %% find start of data by waiting for ***starting the model***
+    istring=[];  % initial string to find/sync start of data
+    for i=1:60
+        d1=char(fread(s, 1, 'uint8'));
+        istring=[istring d1];
+        % if you find the complete starting string
+        % ready 2 bytes then move on
+        % only data is following
+        istring_found=strfind(istring,'***starting the model***');
+        if(istring_found)
+            % then we can assume when the data starts:
+            d1=char(fread(s, 2, 'uint8'));
+        else
+            % nothing
+        end
+    end
+    istring
 end
+
 
 % initialize figure - it is faster to update
 % figure data then replotting it each time
-[fh, dh]=InitFig;
+[fh, dh]=InitFig(Ncx);
 AutoScaleCheck=0;
 
 % data storage variable:
 fdat=[];
+datNumSamples=[];
 
 % refresh rate estimation timer
 refresh_est_size=5;
 refresh_est_vec=zeros(1:refresh_est_size);
 
+%% --------- Perform initial data checks: ----------------------------
+% initialliy read one single data type perform checks on data quality
+% a unsighed single has max of 3.4028e+38
+% a signed single max of plus minus 2.1475e+09
+% so the easiest data check is if any number is above 2.1475e+09
+% there must have been a byte skipped
 
+% % find the fist data type:
+% if(DataType=='single')
+%     d=fread(s, 1, 'uint32')
+% end
+ 
+% read 2 samples and check - usually able to see out of bounds data after
+% the first one or two
+% for k=1:2
+% d=fread(s,[Ncx 1],DataType)  % each channel of data one time
+% max_d=max(abs(d));
+% out_of_range = ((max_d~=0)&&( (max_d<2e-10) || (max_d>2e10) ))
+% fdat=[fdat;d'];
+% end
+
+% if(max(abs(d))>2.1475e+09)
+%     disp('Data integrity error detected')
+% else
+%     % the data is ok to store
+%     fdat=[fdat;d'];
+% end
+
+% %% --------- Perform initial data checks: ----------------------------
+
+
+%% Read data, update graph, store data
 for k=1:1e5
     
-    
     %% Read and store data 
-    % read a single data point
     % assume your computer can execute this loop faster than data is
     % sent to the seria port:
+        
     tic
-    d=fread(s,refresh_num,DataType);
+    d=fread(s,[Ncx refresh_num],DataType);  % each channel of data refresh_num times
     read_time=toc;
     byte_time=read_time/refresh_num/1;
-    fdat=[fdat;d];
-    
-   
-    %% Adjust the plotting data buffer:
-    if(length(fdat)>NumSamples)
-        datNumSamples=(fdat(end-NumSamples:end));
-    else
-        datNumSamples=fdat;
-    end
-    
-    %% handle figure activities:
-    set(dh,'Xdata', 1:length(datNumSamples), 'Ydata',datNumSamples);
-    drawnow
-    % Autoscale up to the window size, then only autoscale with button
-    % press:
-    if(k*refresh_num<NumSamples)
-        AutoScale(datNumSamples,NumSamples);
-    else
-        if(AutoScaleCheck)
-            AutoScale(datNumSamples,NumSamples);
+    fdat=[fdat;d'];
+
+% ------  ToDo ---------------------------------------------------    
+%     chn=2;  % select only one channel (one column) of data
+%     %% Adjust the plotting data buffer:
+%     if(length(fdat)>NumSamples)
+%         datNumSamples=(fdat(end-NumSamples:end,chn));
+%     else
+%         datNumSamples=fdat(:,chn);
+%     end
+
+    % Plotting Tasks:  
+    if(~DataOnlyCheck)
+        %% Adjust the plotting data buffer:
+        if(length(fdat)>NumSamples)
+            datNumSamples=(fdat(end-NumSamples:end,:));
+        else
+            datNumSamples=fdat;
         end
-    end
+        
+        %% handle figure activities:
+        for numxc=1:Ncx
+            % Update each channelof data on the graph
+            set(dh(numxc),'Xdata', 1:size(datNumSamples,1), 'Ydata',datNumSamples(:,numxc));
+        end
+        
+        % Autoscale up to the NumSammples window size, then only autoscale with button
+        % press:  (autoscale until the figure is filled with data)
+        if(k*refresh_num<NumSamples)
+            AutoScale(datNumSamples,NumSamples);
+        else
+            if(AutoScaleCheck)
+                AutoScale(datNumSamples,NumSamples);
+            end
+        end
+        
+        if(AutoScalekeypress)
+            AutoScale(datNumSamples,NumSamples);
+            AutoScalekeypress=0;
+        end
+        
+    end   
+
     
-    if(AutoScalekeypress)
-        AutoScale(datNumSamples,NumSamples);
-        AutoScalekeypress=0;
-    end
-    
+    drawnow
     if(stopkeypress),
         disp('Plotting Stopped')
         disp('current data exported to variables:')
@@ -125,7 +186,6 @@ for k=1:1e5
         byteadjustkeypress=0;
     end
     
-
     %% estimate the sample time if it cannot be found.
     % the estimated time should match the actual sample time
     % if no then the plotting/refresh rate needs to slow 
@@ -158,7 +218,7 @@ catch, end
 
 end
 
-function [fh, dh]=InitFig
+function [fh, dh]=InitFig(Ncx)
 %% initizlize a figure for plotting data:
 fh=figure;
 
@@ -181,9 +241,24 @@ uicontrol('Style', 'pushbutton', 'String', 'Manual AutoScale',...
 hchkbox=uicontrol('Style', 'checkbox', 'String', 'AutoScale',...
     'Units','normalized','Position', [.5 0 .3 .05],...
     'Callback', @AutoScaleCheckbox,'Value',0);
+
+hchkbox=uicontrol('Style', 'checkbox', 'String', 'Collect Data Only',...
+    'Units','normalized','Position', [.7 0 .3 .05],...
+    'Callback', @CollectDataonlyCheckbox,'Value',0);
+assignin('caller','DataOnlyCheck',0);
 %%
 
-dh=plot(0,0,'r','LineWidth',4);
+if(Ncx>1)
+dh=plot(zeros(2,Ncx),'LineWidth',4);
+%  for i=1:Ncx
+%     dh(i)=plot(0,0,'LineWidth',4); 
+%  end
+ 
+else
+ dh=plot(0,0,'r','LineWidth',4);   
+end
+
+
 ylim([-1 1]) % for x in mm
 drawnow
 end
@@ -207,6 +282,10 @@ function AutoScaleCheckbox(~, event)
 assignin('caller','AutoScaleCheck',event.Source.Value)
 end
 
+function CollectDataonlyCheckbox(~, event)
+assignin('caller','DataOnlyCheck',event.Source.Value)
+end
+
 function CloseInstObjects
 disp(' ');
 disp('-- Closing all instrument objects --')
@@ -226,8 +305,8 @@ function AutoScale(datNumSamples, NumSamples)
 %[min(datNumSamples)  max(datNumSamples)]
 %if(max(datNumSamples) > 0  && min(datNumSamples) <= max(datNumSamples) )
 % disp('adj y axis')  
-minD=min(datNumSamples);
-maxD=max(datNumSamples);
+minD=min(min(datNumSamples));
+maxD=max(max(datNumSamples));
 diffD=maxD-minD;
 if(diffD>0)
     ylim([minD, maxD]);

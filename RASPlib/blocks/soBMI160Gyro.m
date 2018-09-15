@@ -1,14 +1,14 @@
-classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
-    % soMPU6050Accel
-    % This class will be used to read the state of the accel
-    %
+classdef soBMI160Gyro < matlab.System & coder.ExternalDependency
+    %BMI160 Gyroscope. 
+    
     
     %#codegen
     %#ok<*EMCA>
     
     properties (Nontunable)
-
+        % DLPFmode = 0;  
     end
+    
     properties (Hidden,Transient,Constant)
 
         
@@ -21,34 +21,54 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
 %         simSampleNum = 0;
     end
     
+   
     methods
+        % Constructor
+        function obj = soBMI160Gyro(varargin)
+            coder.allowpcode('plain');
+            
+            % Support name-value pair arguments when constructing the object.
+            setProperties(obj,nargin,varargin{:});
+        end
+        
+%         function set.DLPFmode(obj,value)
+%             coder.extrinsic('sprintf') % Do not generate code for sprintf
+%             validateattributes(value,...
+%                 {'numeric'},...
+%                 {'real','nonnegative','integer','scalar'},...
+%                 '', ...
+%                 'DLPFmode');
+%              obj.DLPFmode = value;
+%         end
     end
 
     methods (Access = protected)
         function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
-                coder.cinclude('MPU6050wrapper.h');
-                % initialize the potentiometer
-                coder.ceval('MPU6050Accel_Init');
+                coder.cinclude('BMI160wrapper.h');
+                % initialize the sensor
+                %coder.ceval('MPU6050Accel_Init');
+
+                coder.ceval('BMI160Gyro_Init');
             elseif ( coder.target('Sfun') )
                 %
             end
         end
 
-        function [xaccel,yaccel,zaccel] = stepImpl(obj)
+        function [xvel,yvel,zvel] = stepImpl(obj)
             % initialize output to a single (float) with the value zero
             out = int16(zeros(3,1));
             if coder.target('Rtw')% done only for code gen
-                coder.cinclude('MPU6050wrapper.h');
+                coder.cinclude('BMI160wrapper.h');
                 % get the current value of the sensor
-                coder.ceval('MPU6050Accel_Read', coder.wref(out));
+                coder.ceval('BMI160Gyro_Read', coder.wref(out));
             elseif ( coder.target('Sfun') )
                 %
             end
             % pull the data appart
-            xaccel = out(1);
-            yaccel = out(2);
-            zaccel = out(3);
+            xvel = out(1);
+            yvel = out(2);
+            zvel = out(3);
         end
 
         function releaseImpl(obj)
@@ -59,12 +79,22 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
             end
         end
     end
+    
+    methods (Static, Access=protected)
+        function simMode = getSimulateUsingImpl(~)
+            simMode = 'Interpreted execution';
+        end
+        
+        function isVisible = showSimulateUsingImpl
+            isVisible = false;
+        end
+    end
 
     methods (Static)
         function name = getDescriptiveName()
-            name = 'Accel';
+            name = 'Vel';
         end
-        
+ 
         function b = isSupportedContext(context)
             b = context.isCodeGenTarget('rtw');
         end
@@ -75,11 +105,11 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
                 % Add include paths and source files for code generation
                                 
                 % determine path to arduino IDE
-                 try codertarget.target.isCoderTarget(buildInfo.ModelName)
-%                     % we are in 15b
+                try codertarget.target.isCoderTarget(buildInfo.ModelName)
+                    % we are in 15b
                      [~, hardwaredir] = codertarget.arduinobase.internal.getArduinoIDERoot('hardware');
                      librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');
-                 catch me
+                catch me
                     % we are pre 15b
                     [~, hardwaredir] = realtime.internal.getArduinoIDERoot('hardware');
                     librarydir = fullfile(hardwaredir, '..', 'libraries');
@@ -90,6 +120,7 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
                 [current_dir] = fileparts(src_dir);
                 
                 % add the include paths
+                %buildInfo.addIncludePaths(fullfile(librarydir, 'SPI'));
                 buildInfo.addIncludePaths(fullfile(librarydir, 'Wire'));
                 buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','utility'));
                 buildInfo.addIncludePaths(fullfile(current_dir,'..','include'));
@@ -103,6 +134,7 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
 				
                 % add the source paths
                 srcPaths = {...
+                    %fullfile(librarydir, 'SPI'), ...
                     fullfile(librarydir, 'Wire'), ...
                     fullfile(librarydir, 'Wire', 'utility'),...
                     fullfile(librarydir, 'Wire','src'),...
@@ -111,7 +143,8 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
                 buildInfo.addSourcePaths(srcPaths);
                 
                 % add the source files
-                srcFiles = {'Wire.cpp', 'twi.c', 'I2Cdev.cpp', 'MPU6050.cpp', 'MPU6050wrapper.cpp'};
+                % srcFiles = {'Wire.cpp', 'twi.c', 'I2Cdev.cpp', 'MPU6050.cpp', 'MPU6050wrapper.cpp'};
+                srcFiles = {'BMI160Gen.cpp', 'BMI160wrapper.cpp', 'CurieIMU.cpp','BMI160.cpp', 'Wire.cpp', 'twi.c'};
                 buildInfo.addSourceFiles(srcFiles);
                 
             end

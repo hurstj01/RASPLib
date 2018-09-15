@@ -26,7 +26,7 @@ classdef so_int2bytes < matlab.System & coder.ExternalDependency
     end
 
     methods (Access = protected)
-        function setupImpl(~,~)
+        function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
                 %  jlh coder.cinclude('MPU6050wrapper.h');
                 % initialize the sensor

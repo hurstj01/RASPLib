@@ -25,7 +25,7 @@ classdef soMPU6050Temp < matlab.System & coder.ExternalDependency
     end
 
     methods (Access = protected)
-        function setupImpl(~,~)
+        function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
                 coder.cinclude('MPU6050wrapper.h');
                 % initialize the potentiometer

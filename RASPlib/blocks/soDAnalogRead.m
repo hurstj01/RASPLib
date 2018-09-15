@@ -51,7 +51,8 @@ classdef soDAnalogRead < matlab.System ...
             % such as pre-computed constants.
             if coder.target('Rtw')
                 %coder.cinclude('digitalio_arduino.h');
-                coder.ceval('digitalIOSetup', obj.Pin+54, 0);
+                coder.cinclude('Arduino.h');
+                coder.ceval('pinMode', obj.Pin+54, 0);
             end
         end
         
@@ -59,7 +60,8 @@ classdef soDAnalogRead < matlab.System ...
             % Implement output.
             y = false;
             if coder.target('Rtw')
-                y = coder.ceval('readDigitalPin', obj.Pin+54);    % analog # are analog pin # + 54 for mega
+                coder.cinclude('Arduino.h');
+                y = coder.ceval('digitalRead', obj.Pin+54);    % analog # are analog pin # + 54 for mega
             end
         end
         
@@ -132,22 +134,7 @@ classdef soDAnalogRead < matlab.System ...
                 rootDir = fullfile(fileparts(mfilename('fullpath')),'..','src');
                 buildInfo.addIncludePaths(rootDir);
 				buildInfo.addIncludePaths(fullfile(fileparts(mfilename('fullpath')),'..','include'));
-
-				% 2016b or later - fine the installed arduino library directory to use the source files in that location
-                ard_lib=which('arduinorootlib');V=strfind(ard_lib, 'R20');ver=ard_lib(V:V+5);veryr=ver(2:5);
-				%is2016b=~isempty(strmatch(ver,'R2016b'));  % version is 2016b
-                is2016b=(strcmp(ver,'R2016b'));            % version is 2016b
-                is2016plus=str2num(veryr)>=2017;           % version is 2017a or later
-                if(is2016b||is2016plus) %  version is 2016b or later
-					file_seps=strfind(ard_lib, filesep);% fullfile(ard_lib(1:file_seps(end-1)))
-					buildInfo.addSourceFiles('MW_digitalio.cpp',fullfile(ard_lib(1:file_seps(end-1)), 'src'));
-					buildInfo.addIncludeFiles('MW_digitalio.h');
-				else
-					buildInfo.addIncludeFiles('digitalio_arduino.h');
-					buildInfo.addSourceFiles('digitalio_arduino.cpp',rootDir);
-				end
-
-            
+                buildInfo.addIncludeFiles('Arduino.h');            
             end
         end
     end

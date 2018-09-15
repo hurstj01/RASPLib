@@ -1,20 +1,17 @@
-classdef soDAnalogWrite < matlab.System ...
+classdef soPWMWrite < matlab.System ...
         & coder.ExternalDependency ...
         & matlab.system.mixin.Propagates ...
         & matlab.system.mixin.CustomIcon
     %
-    % Set the logical state of an analog pin as a digital output pin.
+    % Write PWM value to digital output pin.
     %
-    
-    
-    
-    
+
     % Copyright 2014 The MathWorks, Inc.
     %#codegen
     %#ok<*EMCA>
     
     properties (Nontunable)
-        Pin = 3 % Analog Pin
+        Pin = 3 % PWM Pin
     end
     
     properties (Constant, Hidden)
@@ -51,14 +48,16 @@ classdef soDAnalogWrite < matlab.System ...
         function setupImpl(obj)
             if coder.target('Rtw')
                 coder.cinclude('Arduino.h');
-                coder.ceval('pinMode', obj.Pin+54, 1);  % analog # are analog pin # + 54 for mega
+                coder.ceval('pinMode', obj.Pin, 1);  % analog # are analog pin # + 54 for mega
             end
         end
         
         function stepImpl(obj,u)
             if coder.target('Rtw')
+                %coder.cinclude('PWMwrite.h');
                 coder.cinclude('Arduino.h');
-                coder.ceval('digitalWrite', obj.Pin+54, u);  % analog # are analog pin # + 54 for mega  %writeDigitalPin
+                u
+                coder.ceval('analogWrite', obj.Pin, u);  % analog # are analog pin # + 54 for mega  %writeDigitalPin
             end
         end
         
@@ -101,7 +100,7 @@ classdef soDAnalogWrite < matlab.System ...
         
         function icon = getIconImpl(~)
             % Define a string as the icon for the System block in Simulink.
-            icon = 'Analog Digital Write';
+            icon = 'PWM Write';
         end
     end
     

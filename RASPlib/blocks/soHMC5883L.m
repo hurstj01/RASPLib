@@ -22,10 +22,17 @@ classdef soHMC5883L < matlab.System & coder.ExternalDependency
     end
     
     methods
+        % Constructor
+        function obj = soHMC5883L(varargin)
+            coder.allowpcode('plain');
+            
+            % Support name-value pair arguments when constructing the object.
+            setProperties(obj,nargin,varargin{:});
+        end
     end
 
     methods (Access = protected)
-        function setupImpl(~,~)
+        function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
                 coder.cinclude('HMC58X3wrapper.h');
                 % initialize the sensor

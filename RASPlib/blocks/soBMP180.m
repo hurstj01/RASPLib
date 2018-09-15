@@ -23,7 +23,7 @@ classdef soBMP180 < matlab.System & coder.ExternalDependency
     end
 
     methods (Access = protected)
-        function setupImpl(~,~)
+        function setupImpl(obj)
             if coder.target('Rtw')% done only for code gen
                 coder.cinclude('BMP180wrapper.h');
                 % initialize the potentiometer

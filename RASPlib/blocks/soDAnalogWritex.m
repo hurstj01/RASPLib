@@ -50,15 +50,14 @@ classdef soDAnalogWrite < matlab.System ...
     methods (Access=protected)
         function setupImpl(obj)
             if coder.target('Rtw')
-                coder.cinclude('Arduino.h');
-                coder.ceval('pinMode', obj.Pin+54, 1);  % analog # are analog pin # + 54 for mega
+                coder.cinclude('digitalio_arduino.h');
+                coder.ceval('digitalIOSetup', obj.Pin+54, 1);  % analog # are analog pin # + 54 for mega
             end
         end
         
         function stepImpl(obj,u)
             if coder.target('Rtw')
-                coder.cinclude('Arduino.h');
-                coder.ceval('digitalWrite', obj.Pin+54, u);  % analog # are analog pin # + 54 for mega  %writeDigitalPin
+                coder.ceval('writeDigitalPin', obj.Pin+54, u);  % analog # are analog pin # + 54 for mega  %writeDigitalPin
             end
         end
         
@@ -130,7 +129,19 @@ classdef soDAnalogWrite < matlab.System ...
                 rootDir = fullfile(fileparts(mfilename('fullpath')),'..','src');
                 buildInfo.addIncludePaths(rootDir);
 				buildInfo.addIncludePaths(fullfile(fileparts(mfilename('fullpath')),'..','include'));
-                buildInfo.addIncludeFiles('Arduino.h');
+
+				% 2016b - fine the installed arduino library directory to use the source files in that location
+                ard_lib=which('arduinorootlib');V=strfind(ard_lib, 'R20');ver=ard_lib(V:V+5);
+				if(strmatch(ver,'R2016b'))
+					file_seps=findstr(ard_lib, filesep);
+					buildInfo.addSourceFiles('MW_digitalio.cpp',fullfile(ard_lib(1:file_seps(end-1)), 'src'));
+					buildInfo.addIncludeFiles('MW_digitalio.h');
+				else
+					buildInfo.addIncludeFiles('digitalio_arduino.h');
+					buildInfo.addSourceFiles('digitalio_arduino.cpp',rootDir);
+				end
+
+            
             end
         end
     end
