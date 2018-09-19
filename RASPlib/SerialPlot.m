@@ -43,7 +43,7 @@ set(s, 'ByteOrder', 'bigEndian','BaudRate', BaudRate);
 fopen(s);
 
 a=ver;
-if(str2num(a(1).Release(3:6))>=2017)
+if(str2num(a(1).Release(3:6))>=2019)
     % then there is no initialization string in the serial connection
     % the data starts right away, noting to do
 else
@@ -55,10 +55,12 @@ else
         % if you find the complete starting string
         % ready 2 bytes then move on
         % only data is following
-        istring_found=strfind(istring,'***starting the model***');
+        % istring_found=strfind(istring,'***starting the model***');   % Default string before 2017
+        istring_found=strfind(istring,'***Data Start***');     %   added to SerialPlot on 9/18/2018 to replicate '***starting the model***' in pre 2017 versions
         if(istring_found)
             % then we can assume when the data starts:
-            d1=char(fread(s, 2, 'uint8'));
+            %% d1=char(fread(s, 2, 'uint8'));  Default value for string before 2017     
+            break
         else
             % nothing
         end

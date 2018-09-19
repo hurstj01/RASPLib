@@ -1,3 +1,6 @@
+9-18-2018
+- added a test string to SerialPlot to allow data sychronization for versions after 2017a.
+
 
 9-15-2018
 - added functinality for serial plot to log/plot multiple channels.  This is useful for boards external mode is not supported (nano) or you need very fast data transfer.  
