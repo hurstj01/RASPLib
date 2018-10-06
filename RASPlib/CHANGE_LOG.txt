@@ -1,3 +1,7 @@
+10-06-2018
+- Added support for ultrasonic sensor up to 2018a.  Added functionality to 3 ultrasonic sensors.  Code works by modifying Tone.cpp to not use Timer 2 ISR so ultrsonic library can be used. 
+
+
 9-18-2018
 - added a test string to SerialPlot to allow data sychronization for versions after 2017a.
 

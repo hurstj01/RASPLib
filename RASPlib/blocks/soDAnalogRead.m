@@ -78,7 +78,7 @@ classdef soDAnalogRead < matlab.System ...
         function num = getNumOutputsImpl(~)
             num = 1;
         end
-        
+       
         function flag = isOutputSizeLockedImpl(~,~)
             flag = true;
         end

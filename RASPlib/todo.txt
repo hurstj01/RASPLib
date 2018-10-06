@@ -1,3 +1,4 @@
 Investigate FST blocks with 754410 and 8833  - won't work with 8833 since keeping a line high has different behavior
 update driver blocks to explain driver supply voltage better (done in M1v4 already)
 Add pictures to demo files of each kit/board for clarity
+clean up system object paths that do not need "wire"

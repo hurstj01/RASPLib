@@ -15,15 +15,7 @@ classdef PWMselect_uno_nano < realtime.internal.SourceSampleTime ... % Inherits 
         PWMFSelect = 1; % PWM Frequency Selector
         PWMTimer=3;     % Timer selection
     end
-    
-    
-    properties (Constant, Hidden)
-        % AvailablePin specifies the range of values allowed for Pin. You
-        % can customize the AvailablePin for a particular board. For
-        % example, use AvailablePin = 2:13 for Arduino Uno.
-        AvailablePin = 0:53;
-    end
-    
+ 
     methods
         % Constructor
         function obj = soPWMFSelect(varargin)
