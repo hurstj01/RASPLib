@@ -43,31 +43,45 @@ set(s, 'ByteOrder', 'bigEndian','BaudRate', BaudRate);
 fopen(s);
 
 a=ver;
-if(str2num(a(1).Release(3:6))>=2019)
-    % then there is no initialization string in the serial connection
-    % the data starts right away, noting to do
+is_post_2015=str2num(a(1).Release(3:6))>2015;
+if(is_post_2015)
+    % then '***Data Start***' should be sent to replace the ***starting the
+    % model*** string that was removed.
+    syncstring='***Data Start***';
 else
-    %% find start of data by waiting for ***starting the model***
-    istring=[];  % initial string to find/sync start of data
-    for i=1:60
-        d1=char(fread(s, 1, 'uint8'));
-        istring=[istring d1];
-        % if you find the complete starting string
-        % ready 2 bytes then move on
-        % only data is following
-        % istring_found=strfind(istring,'***starting the model***');   % Default string before 2017
-        istring_found=strfind(istring,'***Data Start***');     %   added to SerialPlot on 9/18/2018 to replicate '***starting the model***' in pre 2017 versions
-        if(istring_found)
-            % then we can assume when the data starts:
-            %% d1=char(fread(s, 2, 'uint8'));  Default value for string before 2017     
-            break
-        else
-            % nothing
-        end
-    end
-    istring
+    % If 2015a (maybe 2015b?) the '***Data Start***' string is somehow
+    % supressed and the default ***starting the
+    % model*** is still sent - so look for that to sync data
+    syncstring='***starting the model***';
 end
 
+disp(['syncstring: ' syncstring])
+
+%% find start of data by waiting for ***starting the model***
+istring=[];  % initial string to find/sync start of data
+for i=1:60
+    d1=char(fread(s, 1, 'uint8'));
+    istring=[istring d1];
+    % if you find the complete starting string
+    % ready 2 bytes then move on
+    % only data is following
+    % istring_found=strfind(istring,'***starting the model***');   % Default string before 2017
+    istring_found=strfind(istring,syncstring);     %   added to SerialPlot on 9/18/2018 to replicate '***starting the model***' in pre 2017 versions
+    if(istring_found)
+        % then we can assume when the data start:
+        if(is_post_2015)
+            % skip the rest, go right to getting data
+            break;
+        else
+            % skip two bytes, as it seems it has 2 extra bytes (probably
+            % newline and clearling?
+            d1=char(fread(s, 2, 'uint8'));%  Default value for string before 2017
+            break
+        end
+    end
+end
+
+disp(['istring: ' istring])
 
 % initialize figure - it is faster to update
 % figure data then replotting it each time
@@ -93,7 +107,7 @@ refresh_est_vec=zeros(1:refresh_est_size);
 % if(DataType=='single')
 %     d=fread(s, 1, 'uint32')
 % end
- 
+
 % read 2 samples and check - usually able to see out of bounds data after
 % the first one or two
 % for k=1:2
@@ -116,26 +130,26 @@ refresh_est_vec=zeros(1:refresh_est_size);
 %% Read data, update graph, store data
 for k=1:1e5
     
-    %% Read and store data 
+    %% Read and store data
     % assume your computer can execute this loop faster than data is
     % sent to the seria port:
-        
+    
     tic
     d=fread(s,[Ncx refresh_num],DataType);  % each channel of data refresh_num times
     read_time=toc;
     byte_time=read_time/refresh_num/1;
     fdat=[fdat;d'];
-
-% ------  ToDo ---------------------------------------------------    
-%     chn=2;  % select only one channel (one column) of data
-%     %% Adjust the plotting data buffer:
-%     if(length(fdat)>NumSamples)
-%         datNumSamples=(fdat(end-NumSamples:end,chn));
-%     else
-%         datNumSamples=fdat(:,chn);
-%     end
-
-    % Plotting Tasks:  
+    
+    % ------  ToDo ---------------------------------------------------
+    %     chn=2;  % select only one channel (one column) of data
+    %     %% Adjust the plotting data buffer:
+    %     if(length(fdat)>NumSamples)
+    %         datNumSamples=(fdat(end-NumSamples:end,chn));
+    %     else
+    %         datNumSamples=fdat(:,chn);
+    %     end
+    
+    % Plotting Tasks:
     if(~DataOnlyCheck)
         %% Adjust the plotting data buffer:
         if(length(fdat)>NumSamples)
@@ -165,8 +179,8 @@ for k=1:1e5
             AutoScalekeypress=0;
         end
         
-    end   
-
+    end
+    
     
     drawnow
     if(stopkeypress),
@@ -190,7 +204,7 @@ for k=1:1e5
     
     %% estimate the sample time if it cannot be found.
     % the estimated time should match the actual sample time
-    % if no then the plotting/refresh rate needs to slow 
+    % if no then the plotting/refresh rate needs to slow
     % down (increase refresh_num)
     
     est_sample_time=toc/refresh_num;
@@ -205,12 +219,12 @@ for k=1:1e5
         end
     end
     
-
+    
 end
 
 save 'fdat' fdat
 assignin('base','fdat',fdat)
-assignin('base', 'wdat',datNumSamples) 
+assignin('base', 'wdat',datNumSamples)
 
 try,
     fclose(s)
@@ -251,13 +265,13 @@ assignin('caller','DataOnlyCheck',0);
 %%
 
 if(Ncx>1)
-dh=plot(zeros(2,Ncx),'LineWidth',4);
-%  for i=1:Ncx
-%     dh(i)=plot(0,0,'LineWidth',4); 
-%  end
- 
+    dh=plot(zeros(2,Ncx),'LineWidth',4);
+    %  for i=1:Ncx
+    %     dh(i)=plot(0,0,'LineWidth',4);
+    %  end
+    
 else
- dh=plot(0,0,'r','LineWidth',4);   
+    dh=plot(0,0,'r','LineWidth',4);
 end
 
 
@@ -306,7 +320,7 @@ end
 function AutoScale(datNumSamples, NumSamples)
 %[min(datNumSamples)  max(datNumSamples)]
 %if(max(datNumSamples) > 0  && min(datNumSamples) <= max(datNumSamples) )
-% disp('adj y axis')  
+% disp('adj y axis')
 minD=min(min(datNumSamples));
 maxD=max(max(datNumSamples));
 diffD=maxD-minD;
