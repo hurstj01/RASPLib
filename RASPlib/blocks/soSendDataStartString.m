@@ -3,8 +3,8 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
         & matlab.system.mixin.Propagates ...
         & matlab.system.mixin.CustomIcon
     %
-    %Send a data string at serial connection to allow sychronization of data.  Sends "***Data Start***" at the beginning of data transmission so the SerialPlot block can sychronize data  
-    % 
+    %Send a data string at serial connection to allow sychronization of data.  Sends "***Data Start***" at the beginning of data transmission so the SerialPlot block can sychronize data
+    %
     % abcs
     
     % Copyright 2014 The MathWorks, Inc.
@@ -14,6 +14,7 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
     properties (Nontunable)
         % PWMFSelect = 1; % PWM Frequency Selector
         % PWMTimer=3;     % Timer selection
+        is_post_2015a=~verLessThan('matlab','8.6');
     end
     
     
@@ -31,21 +32,28 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
             
             % Support name-value pair arguments when constructing the object.
             setProperties(obj,nargin,varargin{:});
+            
         end
-
+        
     end
     
     methods (Access=protected)
         function setupImpl(obj)
-
             if coder.target('Rtw')
-                coder.cinclude('DataStartString.h');
-                coder.ceval('Send_Data_Start_String');
+                % if post 2015a
+                if(obj.is_post_2015a)  % send a start string
+                    coder.cinclude('DataStartString.h');
+                    coder.ceval('Send_Data_Start_String');
+                end
+                % if 2015a or earlier
+                % do nothing, it will send ***starting the model*** by
+                % default
+                
             end
         end
         
         function y=stepImpl(obj)
-           y = true;
+            y = true;
         end
         
         
@@ -54,7 +62,7 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
     end
     
     methods (Access=protected)
-
+        
         function num = getNumInputsImpl(~)
             num = 0;
         end
@@ -80,11 +88,11 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
         function varargout = isOutputComplexImpl(~)
             varargout{1} = false;
         end
-         
+        
         function varargout = getOutputSizeImpl(~)
             varargout{1} = 1;
         end
-         
+        
         function varargout = getOutputDataTypeImpl(~)
             varargout{1} = 'logical';
         end

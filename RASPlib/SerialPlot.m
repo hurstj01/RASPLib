@@ -42,8 +42,7 @@ s = serial(COMport);
 set(s, 'ByteOrder', 'bigEndian','BaudRate', BaudRate);
 fopen(s);
 
-a=ver;
-is_post_2015=str2num(a(1).Release(3:6))>2015;
+is_post_2015=~verLessThan('matlab','8.6');
 if(is_post_2015)
     % then '***Data Start***' should be sent to replace the ***starting the
     % model*** string that was removed.
