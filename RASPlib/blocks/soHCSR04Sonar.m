@@ -154,6 +154,15 @@ classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
                     tonecpp_file=[tonedir '\Tone.cpp'];
                     
                     if(isfile(tonecpp_file))
+                        
+                        disp('');
+                        disp('To use the ultrasonic block you need to disable Timer 2 in Tone.cpp')
+                        disp('Tone.cpp is located here:')
+                        disp(tonecpp_file)
+                        disp('To disable timer 2 for ultrasonic use')
+                        disp('You should <a href="matlab: opentoline(tonecpp_file,537)">open Tone.cpp</a>')
+                        disp('Find the line with text #ifdef USE_TIMER2 and change it to #ifdef USE_TIMER2_disabled')
+                        disp('Save the file')
                         disable_timer2_in_Tone_cpp(tonecpp_file);
                     end
                     
