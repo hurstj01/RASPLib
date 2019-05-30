@@ -1,5 +1,5 @@
 classdef soVL53L0X < matlab.System & coder.ExternalDependency
-    % I2C sensor MPU6050 temperature
+    % VL53L0X I2C sensor
     % This class will be used to read the state of the MPU6050 temperature
     %
     
