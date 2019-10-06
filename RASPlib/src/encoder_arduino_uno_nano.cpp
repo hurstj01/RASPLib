@@ -113,11 +113,11 @@ static void isrPinBEn0(void)
 // ISR routines for PCINT0
 // Encoder using PCINT vector will be ENC[4]
 /* Interrupt Service Routine: change on pin A & B */
-ISR( PCINT0_vect )
+ISR( PCINT1_vect )
 {
   /* read pin A & B right away                                   */
-    int PINB_REG=PINB;  // read entire register once
-	int drB = bool(PINB_REG&(1<<3));int drA = bool(PINB_REG&(1<<4));  // PB5, PB6 --> 11, 12
+    int PINB_REG=PINC;  // read entire register once
+	int drB = bool(PINB_REG&(1<<2));int drA = bool(PINB_REG&(1<<3));  // PC2, PC3 --> A2, A3
 
 	
   // Find out which pin changed:
@@ -232,9 +232,19 @@ extern "C" void enc_init(int enc, int pinA, int pinB)
 		case 4:
 			// attach interrupts for enc[4]:
 			// ping 11 and 12 into pin change interrupts:
-			PCICR |= (1 << PCIE0);     // enable PCINT0  (pins 11 and 12 --> PCINT5, PCINT6 --> PCINT0 vec)
-			PCMSK0 |= (1 << PCINT3);  // Pin 11 (uno, nano)
-			PCMSK0 |= (1 << PCINT4);  // Pin 12 (uno, nano)
+			//
+			///PCICR |= (1 << PCIE0);     // enable PCINT0  (pins 11 and 12 --> PCINT5, PCINT6 --> PCINT0 vec)
+			//PCMSK0 |= (1 << PCINT3);  // Pin 11 (uno, nano)
+			//PCMSK0 |= (1 << PCINT4);  // Pin 12 (uno, nano)
+			
+			// no longer use 11 and 12 for encoder inputs but instead PWM outputs 
+			// ADC2 and ACDC3 which are PCINT10, PCINT11 which is on PCINT 1 or PCINT1 vec
+			
+			PCICR |= (1 << PCIE1);     // enable PCINT1  (A2 & A3 --> PCINT10, PCINT11 --> PCINT1 vec)
+			PCMSK1 |= (1 << PCINT10);  // analog A2 as input (uno, nano)
+			PCMSK1 |= (1 << PCINT11);  // analog A3 as input (uno, nano)
+			
+			
 			break;			
     }
 }
