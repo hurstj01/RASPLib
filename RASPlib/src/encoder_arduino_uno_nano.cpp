@@ -110,7 +110,79 @@ static void isrPinBEn0(void)
     } // end counter update
 } // end ISR pin B Encoder 0
 
-// ISR routines for PCINT0
+// ISR routines for PCINT2
+// Encoder using PCINT vector will be ENC[3]
+/* Interrupt Service Routine: change on pin A & B */
+ISR( PCINT2_vect )
+{
+  /* read pin A & B right away                                   */
+    int PIND_REG=PIND;  // read entire register once
+	int drB = bool(PIND_REG&(1<<5));int drA = bool(PIND_REG&(1<<6));  // PD5, PD6 --> D5, D6
+
+	
+  // Find out which pin changed:
+  if(drB==Enc[3].Bprev){
+	  // A must have changed
+	  Enc[3].Aprev=drA;
+	  // this updates the counter if A Changed:
+    if (drA == HIGH) {   // low->high on A?
+        if (drB == LOW) {  // check pin B
+            Enc[3].pos++;  // going clockwise: increment
+        } else {
+            Enc[3].pos--;  // going counterclockwise: decrement
+        }
+    }
+    else { // must be high to low on A
+        if (drB == HIGH) { // check pin B
+            Enc[3].pos++;  // going clockwise: increment
+        } else {
+            Enc[3].pos--;  // going counterclockwise: decrement
+        }
+    } // end counter update
+	
+  } else {
+	  // B must have changed
+	  Enc[3].Bprev=drB;
+	  // this updates the counter if B changed:
+    if (drB == HIGH) {   // low->high on B?
+        if (drA == HIGH) { // check pin A
+            Enc[3].pos++;  // going clockwise: increment
+        } else {
+            Enc[3].pos--;  // going counterclockwise: decrement
+        }
+    }
+    else { // must be high to low on B
+        if (drA == LOW) {  // check pin A
+            Enc[3].pos++;  // going clockwise: increment
+        } else {
+            Enc[3].pos--;  // going counterclockwise: decrement
+        }
+    } // end counter update
+	  
+  }
+	
+/*   // this updates the counter                                
+  if (drA == HIGH) {   // low->high on A?  
+      
+    if (drB == LOW) {  // check pin B  
+  	Enc[3].pos++;  // going clockwise: increment          
+    } else {
+  	Enc[3].pos--;  // going counterclockwise: decrement   
+    }
+    
+  } else {                       // must be high to low on A  
+  
+    if (drB == HIGH) { // check pin B  
+  	Enc[3].pos++;  // going clockwise: increment          
+    } else {
+  	Enc[3].pos--;  // going counterclockwise: decrement   
+    }
+    
+  } // end counter update    */                                  
+
+} // end ISR pin A Encoder 3   
+
+// ISR routines for PCINT1
 // Encoder using PCINT vector will be ENC[4]
 /* Interrupt Service Routine: change on pin A & B */
 ISR( PCINT1_vect )
@@ -161,26 +233,26 @@ ISR( PCINT1_vect )
 	  
   }
 	
-  /* this updates the counter                                */
-  if (drA == HIGH) {   /* low->high on A? */
+/*   // this updates the counter                                
+  if (drA == HIGH) {   // low->high on A?  
       
-    if (drB == LOW) {  /* check pin B */
-  	Enc[4].pos++;  /* going clockwise: increment         */
+    if (drB == LOW) {  // check pin B  
+  	Enc[4].pos++;  // going clockwise: increment          
     } else {
-  	Enc[4].pos--;  /* going counterclockwise: decrement  */
+  	Enc[4].pos--;  // going counterclockwise: decrement   
     }
     
-  } else {                       /* must be high to low on A */
+  } else {                       // must be high to low on A  
   
-    if (drB == HIGH) { /* check pin B */
-  	Enc[4].pos++;  /* going clockwise: increment         */
+    if (drB == HIGH) { // check pin B  
+  	Enc[4].pos++;  // going clockwise: increment          
     } else {
-  	Enc[4].pos--;  /* going counterclockwise: decrement  */
+  	Enc[4].pos--;  // going counterclockwise: decrement   
     }
     
-  } /* end counter update                                    */
+  } // end counter update    */                                  
 
-} /* end ISR pin A Encoder 3     */
+} // end ISR pin A Encoder 3      
 
 
 // Initialization function called by Encoder System object
@@ -201,7 +273,7 @@ extern "C" void enc_init(int enc, int pinA, int pinB)
     // set encoder pins as inputs
     pinMode(Enc[enc].pinA, INPUT);
     pinMode(Enc[enc].pinB, INPUT);
-    
+        
     // turn on pullup resistors
     digitalWrite(Enc[enc].pinA, HIGH);
     digitalWrite(Enc[enc].pinB, HIGH);
@@ -228,6 +300,10 @@ extern "C" void enc_init(int enc, int pinA, int pinB)
 			//PCICR |= (1 << PCIE1);     // enable PCINT 1 
 			//PCMSK2 |= (1 << PCINT16);  // Analog 8 as input
 			//PCMSK1 |= (1 << PCINT9);  // RX3 D15 as input 
+			
+			PCICR |= (1 << PCIE2);     // enable PCINT1  D5, D6 PCINT2)
+			PCMSK2 |= (1 << PCINT21);  // analog D5 as input (uno, nano)
+			PCMSK2 |= (1 << PCINT22);  // analog D6 as input (uno, nano)
 			break;		
 		case 4:
 			// attach interrupts for enc[4]:

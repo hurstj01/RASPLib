@@ -1,3 +1,17 @@
+08-17-2020
+- Added support for Nano V3
+- Added driver blocks with Voffset (more intuitive/easier than PWMoffset)
+- fixed sampling time error for PWM frequency block in 2019b/2020a
+- Separated Magnetometer from 9250 block (Magnetometer read is slow)
+	- updated demos with 9250 and added separate files for older systems
+- minor updates to demo blocks
+
+02-19-2020
+- Added support Nano functionality, encoders, PWM Pins, PWM timers
+- Added Generic IO to main library
+-- Read Analog pin as a digital (0,1) pin for Nano and Mega
+-- Read Digital Pin with pullup enabled
+
 10-06-2018
 - Added support for ultrasonic sensor up to 2018a.  Added functionality to 3 ultrasonic sensors.  Code works by modifying Tone.cpp to not use Timer 2 ISR so ultrsonic library can be used. 
 

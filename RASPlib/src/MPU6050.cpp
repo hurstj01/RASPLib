@@ -62,7 +62,7 @@ MPU6050::MPU6050(uint8_t address) {
  */
 void MPU6050::initialize() {
     setClockSource(MPU6050_CLOCK_PLL_XGYRO);
-    setFullScaleGyroRange(MPU6050_GYRO_FS_250);
+    setFullScaleGyroRange(MPU6050_GYRO_FS_250); // JLH MPU6050_GYRO_FS_2000  MPU6050_GYRO_FS_250
     setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
     setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
 }

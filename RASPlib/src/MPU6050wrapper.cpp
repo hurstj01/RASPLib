@@ -10,6 +10,15 @@ extern "C" void MPU6050Accel_Init(void)
 {
     Wire.begin();
     accelgyro.initialize();
+	
+/* 	// Make devAddr public and add this line:
+	if(!accelgyro.testConnection())
+	{
+		//Serial.println("Test Connection Failed Changing I2C addr to 0x69");
+		accelgyro.devAddr=0x69;
+	} */
+	
+	
 	//  Enable I2C bypass on MPU6050 so the compass can be accessed
 	I2Cdev::writeBit(MPU6050_DEFAULT_ADDRESS, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, false);
 	I2Cdev::writeBit(MPU6050_DEFAULT_ADDRESS, MPU6050_RA_INT_PIN_CFG, MPU6050_INTCFG_I2C_BYPASS_EN_BIT, true);

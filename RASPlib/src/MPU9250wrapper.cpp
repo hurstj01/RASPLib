@@ -4,7 +4,7 @@
 #include "I2Cdev.h"
 #include "MPU9250.h"
 
-MPU9250 accelgyro;
+MPU9250 accgyro;
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
 int16_t mx, my, mz;
@@ -12,13 +12,20 @@ int16_t mx, my, mz;
 extern "C" void MPU9250_Init(void)
 {
     Wire.begin();
-    accelgyro.initialize();
+    accgyro.initialize();
+	
+/*   // Make devAddr public and add this line:
+  if(!accgyro.testConnection())
+  {
+    //Serial.println("Test Connection Failed Changing I2C addr to 0x69");
+    accgyro.devAddr=0x69;
+  } */
 }
 
 extern "C" void MPU9250_ReadRAW(int* pfData)
 {
 
-    accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
+    accgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
 	
     pfData[0]=ax;
 	pfData[1]=ay;
@@ -29,6 +36,18 @@ extern "C" void MPU9250_ReadRAW(int* pfData)
     pfData[6]=mx;
     pfData[7]=my;
     pfData[8]=mz;
-    pfData[9]=accelgyro.getTemperature();
+    pfData[9]=accgyro.getTemperature();
+	
+}
+
+extern "C" void MPU9250_ReadMag(int* pfData)
+{
+
+    accgyro.getMag(&mx, &my, &mz);
+	
+    pfData[0]=mx;
+	pfData[1]=my;
+    pfData[2]=mz;
+	
 	
 }

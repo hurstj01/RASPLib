@@ -3,12 +3,7 @@ classdef Encoder_arduino_uno_nano < matlab.System ...
         & matlab.system.mixin.Propagates ...
         & matlab.system.mixin.CustomIcon 
     %
-    % Read the position of a quadrature encoder.  Encoder 0: pins 1 & 2 (reverse pins to reverse direction recorded). Encoder 1: pins 18 & 19.  Encoder 2: "pins" value of 6, 7 corresponding to interrupts 6 and 7 (minsegmega).  Encoder 3: pins 15 & 62 corresponding to interrupts for digital pin 15 and analog pin 8. Select the PWM frequency based on the timer for the motor driver pin.  Timer 1: pins 11, 12, Timer 2: pins 9, 10, Timer 3: pins 2, 3, 5, Timer 4: pins 6, 7, 8, Timer 5: pins 44, 45, 46.  Does not do Timer 0: pins 4, 13, since timer 0 affects major timing events.Frequency Selection: 1, 2, 3, 4, 5 coresponds to divisor 1, 8, 64, 256, 1024 corresponding to approximate frequiencies 32000Hz, 4000KHz, 490Hz, 122Hz, 30Hzx. Timer selection -1 makes no changes to PWM timers.
-    
-    %
-    %
-    %
-    %
+    % Read the position of a quadrature encoder.  For Nano select Encoder 0: pins 2 & 3 (D2 and D3, reverse pins to reverse direction recorded). Encoder 4: For Pins A2 and A3 (Are numbered 16 and 17)
     
     % Copyright 2014 The MathWorks, Inc.
     %#codegen

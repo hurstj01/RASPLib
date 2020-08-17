@@ -1,21 +1,18 @@
-classdef PWMselect < matlab.System ... % Inherits from matlab.System
+classdef soDigitalPullupRead < matlab.System ...
         & coder.ExternalDependency ...
         & matlab.system.mixin.Propagates ...
-        & matlab.system.mixin.CustomIcon
+        & matlab.system.mixin.CustomIcon 
     %
-    %Selects the Mega 2560 PWM frequency based on the timer for the pin.  Timer 1: pins 11, 12, Timer 2: pins 9, 10, Timer 3: pins 2, 3, 5, Timer 4: pins 6, 7, 8, Timer 5: pins 44, 45, 46.  Does not do Timer 0: pins 4, 13, since timer 0 affects major timing events.  Frequency Selection: 1, 2, 3, 4, 5 coresponds to divisor 1, 8, 64, 256, 1024 corresponding to approximate frequiencies 32000Hz, 4000KHz, 490Hz, 122Hz, 30Hz.  Sample time should be left to 0 so it will be sampled only once, since this block only effects initization.   
-    % 
-    % abcs
+    % Read the logical state of an analog digital input pin.
+    %
     
     % Copyright 2014 The MathWorks, Inc.
     %#codegen
     %#ok<*EMCA>
     
     properties (Nontunable)
-        PWMFSelect = 1; % PWM Frequency Selector
-        PWMTimer=3;     % Timer selection
+        Pin = 4; % Digial pin
     end
-    
     
     properties (Constant, Hidden)
         % AvailablePin specifies the range of values allowed for Pin. You
@@ -26,93 +23,89 @@ classdef PWMselect < matlab.System ... % Inherits from matlab.System
     
     methods
         % Constructor
-        function obj = soPWMFSelect(varargin)
+        function obj = soDigitalPullupRead(varargin)
             coder.allowpcode('plain');
             
             % Support name-value pair arguments when constructing the object.
             setProperties(obj,nargin,varargin{:});
         end
         
-        function set.PWMFSelect(obj,value)
+        function set.Pin(obj,value)
             coder.extrinsic('sprintf') % Do not generate code for sprintf
             validateattributes(value,...
                 {'numeric'},...
-                {'real', 'positive', 'integer','scalar'},...
+                {'real','integer','scalar'},...
                 '', ...
-                'PWMFSelect');
-            
-            obj.PWMFSelect = value;
+                'Pin');
+            assert(any(value == obj.AvailablePin), ...
+                'Invalid value for Pin. Pin must be one of the following: %s', ...
+                sprintf('%d ', obj.AvailablePin));
+            obj.Pin = value;
         end
-        
-        function set.PWMTimer(obj,value)
-            coder.extrinsic('sprintf') % Do not generate code for sprintf
-            validateattributes(value,...
-                {'numeric'},...
-                {'real', 'positive', 'integer','scalar'},...
-                '', ...
-                'PWMTimer');
-            obj.PWMTimer = value;
-        end
-        
     end
     
     methods (Access=protected)
+        %% Common functions
         function setupImpl(obj)
-
+            % Implement tasks that need to be performed only once,
+            % such as pre-computed constants.
             if coder.target('Rtw')
-                coder.cinclude('PWMFSelect.h');
-                coder.ceval('PWM_Select', obj.PWMFSelect, obj.PWMTimer);
+                %coder.cinclude('digitalio_arduino.h');
+                coder.cinclude('Arduino.h');
+                coder.ceval('pinMode', obj.Pin, 2);  % 2 means use input pullup INPUT_PULLUP, 0 input, 1 output
             end
         end
         
-        function y=stepImpl(obj)
-           y = true;
+        function y = stepImpl(obj)
+            % Implement output.
+            y = false;
+            if coder.target('Rtw')
+                coder.cinclude('Arduino.h');
+                y = coder.ceval('digitalRead', obj.Pin);    % analog # are analog pin # + 54 for mega
+            end
         end
-        
         
         function releaseImpl(obj) %#ok<MANU>
         end
     end
     
     methods (Access=protected)
-
+        %% Define output properties
         function num = getNumInputsImpl(~)
             num = 0;
         end
         
-        %% Define output properties
-        
         function num = getNumOutputsImpl(~)
             num = 1;
         end
-        
+       
         function flag = isOutputSizeLockedImpl(~,~)
-            flag = false;
+            flag = true;
         end
         
         function varargout = isOutputFixedSizeImpl(~,~)
-            varargout{1}= true;
+            varargout{1} = true;
         end
         
         function flag = isOutputComplexityLockedImpl(~,~)
-            flag = false;
+            flag = true;
         end
         
         function varargout = isOutputComplexImpl(~)
             varargout{1} = false;
         end
-         
+        
         function varargout = getOutputSizeImpl(~)
-            varargout{1} = 1;
+            varargout{1} = [1,1];
         end
-         
+        
         function varargout = getOutputDataTypeImpl(~)
             varargout{1} = 'logical';
         end
         
         function icon = getIconImpl(~)
             % Define a string as the icon for the System block in Simulink.
-            icon = 'Mega PWM Frequency Select';
+            icon = 'Digital Pullup Read';
         end
     end
     
@@ -128,7 +121,7 @@ classdef PWMselect < matlab.System ... % Inherits from matlab.System
     
     methods (Static)
         function name = getDescriptiveName()
-            name = 'Mega PWM Frequency Select';
+            name = 'Analog Digital Read';
         end
         
         function b = isSupportedContext(context)
@@ -140,10 +133,10 @@ classdef PWMselect < matlab.System ... % Inherits from matlab.System
                 % Update buildInfo
                 rootDir = fullfile(fileparts(mfilename('fullpath')),'..','src');
                 buildInfo.addIncludePaths(rootDir);
-                buildInfo.addIncludePaths(fullfile(fileparts(mfilename('fullpath')),'..','include'));
-                buildInfo.addIncludeFiles('PWMFSelect.h');
-                buildInfo.addSourceFiles('PWMFSelect.cpp',rootDir);
+				buildInfo.addIncludePaths(fullfile(fileparts(mfilename('fullpath')),'..','include'));
+                buildInfo.addIncludeFiles('Arduino.h');            
             end
         end
     end
 end
+

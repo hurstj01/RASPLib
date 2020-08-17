@@ -31,11 +31,14 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
+                    TCCR0B=TCCR0B & 0b11111000 | 0x01;
                     break;
                 case 2:
-                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
+                    TCCR1B=TCCR1B & 0b11111000 | 0x01;
                     break;
+                case 3:
+                    TCCR2B=TCCR2B & 0b11111000 | 0x01;
+                    break;              
                 default:
                     break;
             }
@@ -46,9 +49,12 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x02;
+                    TCCR0B=TCCR0B & 0b11111000 | 0x02;
                     break;
                 case 2:
+                    TCCR1B=TCCR1B & 0b11111000 | 0x02;
+                    break;
+                case 3:
                     TCCR2B=TCCR2B & 0b11111000 | 0x02;
                     break;
                 default:
@@ -61,9 +67,12 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    TCCR0B=TCCR0B & 0b11111000 | 0x03;
                     break;
                 case 2:
+                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    break;
+                case 3:
                     TCCR2B=TCCR2B & 0b11111000 | 0x03;
                     break;
                 default:
@@ -76,9 +85,12 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x04;
+                    TCCR0B=TCCR0B & 0b11111000 | 0x04;
                     break;
                 case 2:
+                    TCCR1B=TCCR1B & 0b11111000 | 0x04;
+                    break;
+                case 3:
                     TCCR2B=TCCR2B & 0b11111000 | 0x04;
                     break;
                 default:
@@ -90,10 +102,13 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
         case 5:
             
             switch(PWM_Timer) {
-                case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x05;
+                 case 1:
+                    TCCR0B=TCCR0B & 0b11111000 | 0x05;
                     break;
                 case 2:
+                    TCCR1B=TCCR1B & 0b11111000 | 0x05;
+                    break;
+                case 3:
                     TCCR2B=TCCR2B & 0b11111000 | 0x05;
                     break;
                 default:
@@ -106,9 +121,12 @@ extern "C" void PWM_Select(uint8_T PWM_Divisor, uint8_T PWM_Timer)
             
             switch(PWM_Timer) {
                 case 1:
-                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    TCCR0B=TCCR0B & 0b11111000 | 0x03;
                     break;
                 case 2:
+                    TCCR1B=TCCR1B & 0b11111000 | 0x03;
+                    break;
+                case 3:
                     TCCR2B=TCCR2B & 0b11111000 | 0x03;
                     break;
                 default:

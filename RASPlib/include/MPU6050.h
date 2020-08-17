@@ -979,7 +979,7 @@ class MPU6050 {
             uint16_t dmpGetFIFOPacketSize();
         #endif
 
-    private:
+    private: //JLH  Make this publie cand use test connection to read/modify devAddr 
         uint8_t devAddr;
         uint8_t buffer[14];
 };
