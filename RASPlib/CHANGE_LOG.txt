@@ -1,8 +1,8 @@
 08-17-2020
 - Added support for Nano V3
 - Added driver blocks with Voffset (more intuitive/easier than PWMoffset)
-- fixed sampling time error for PWM frequency block in 2019b/2020a
-- Separated Magnetometer from 9250 block (Magnetometer read is slow)
+- fixed sampling time error for PWM freuqncy block in 2019b/2020a
+- Separated Magnetometer from 9250 block (Magnetometer reas is slow)
 	- updated demos with 9250 and added separate files for older systems
 - minor updates to demo blocks
 

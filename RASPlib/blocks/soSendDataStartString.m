@@ -1,4 +1,4 @@
-classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inherits from matlab.System
+classdef soSendDataStartString < matlab.System ... ... % Inherits from matlab.System
         & coder.ExternalDependency ...
         & matlab.system.mixin.Propagates ...
         & matlab.system.mixin.CustomIcon
@@ -12,8 +12,6 @@ classdef soSendDataStartString < realtime.internal.SourceSampleTime ... % Inheri
     %#ok<*EMCA>
     
     properties (Nontunable)
-        % PWMFSelect = 1; % PWM Frequency Selector
-        % PWMTimer=3;     % Timer selection
         is_post_2015a=~verLessThan('matlab','8.6');
     end
     
