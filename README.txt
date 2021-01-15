@@ -5,9 +5,8 @@ Rensselaer Arduino Support Package Library (RASPlib) installation Instructions:
 
 
 Prerequisite: 
-- MATLAB/Simulink (2015a 32 bit is recommended)
+- MATLAB/Simulink (2015a 32 bit is recommended or 2020a)
 - Arduino Support package for Simulink has been installed  (see Lab 1)
-
 
 
 Graphical installation instructions are given in the included PDF (Lab 1 and Lab 1a)
