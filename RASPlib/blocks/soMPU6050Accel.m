@@ -6,23 +6,23 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
     %#codegen
     %#ok<*EMCA>
     
-    properties (Nontunable)
+%     properties (Nontunable)
+% 
+%     end
+%     properties (Hidden,Transient,Constant)
+% 
+%         
+%     end
 
-    end
-    properties (Hidden,Transient,Constant)
-
-        
-    end
-
-    properties (Hidden)
-%         % keeps track of the selected Potentiometer
-%         potNum = 0;
-%         % simSampleNum - tracks which sample we are on in a simulation
-%         simSampleNum = 0;
-    end
+%     properties (Hidden)
+% %         % keeps track of the selected Potentiometer
+% %         potNum = 0;
+% %         % simSampleNum - tracks which sample we are on in a simulation
+% %         simSampleNum = 0;
+%     end
     
-    methods
-    end
+%     methods
+%     end
 
     methods (Access = protected)
         function setupImpl(obj)
@@ -37,8 +37,8 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
 
         function [xaccel,yaccel,zaccel] = stepImpl(obj)
             % initialize output to a single (float) with the value zero
-            out = int16(zeros(3,1));
-            if coder.target('Rtw')% done only for code gen
+             out = int16(zeros(3,1));
+            if (coder.target('Rtw'))% done only for code gen
                 coder.cinclude('MPU6050wrapper.h');
                 % get the current value of the sensor
                 coder.ceval('MPU6050Accel_Read', coder.wref(out));
@@ -49,6 +49,7 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
             xaccel = out(1);
             yaccel = out(2);
             zaccel = out(3);
+
         end
 
         function releaseImpl(obj)
@@ -75,11 +76,12 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
                 % Add include paths and source files for code generation
                                 
                 % determine path to arduino IDE
-                 try codertarget.target.isCoderTarget(buildInfo.ModelName)
+
+                 try %%codertarget.target.isCoderTarget(buildInfo.ModelName)
 %                     % we are in 15b
                      [~, hardwaredir] = codertarget.arduinobase.internal.getArduinoIDERoot('hardware');
                      librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');
-                 catch me
+                 catch
                     % we are pre 15b
                     [~, hardwaredir] = realtime.internal.getArduinoIDERoot('hardware');
                     librarydir = fullfile(hardwaredir, '..', 'libraries');
@@ -91,24 +93,31 @@ classdef soMPU6050Accel < matlab.System & coder.ExternalDependency
                 
                 % add the include paths
                 buildInfo.addIncludePaths(fullfile(librarydir, 'Wire'));
-                buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','utility'));
+                if(exist(fullfile(librarydir, 'Wire','utility'))),buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','utility')); end
                 buildInfo.addIncludePaths(fullfile(current_dir,'..','include'));
                 % 2017a new arduino paths:
                 buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','src'));
-                buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','src','utility'));
+                if(exist(fullfile(librarydir, 'Wire','src','utility'))),buildInfo.addIncludePaths(fullfile(librarydir, 'Wire','src','utility'));end
                 
 				% 2017a new arduino paths:
                 %fullfile(librarydir, 'Wire','src'),...
                 %fullfile(librarydir, 'Wire','src','utility'),...
 				
                 % add the source paths
-                srcPaths = {...
-                    fullfile(librarydir, 'Wire'), ...
-                    fullfile(librarydir, 'Wire', 'utility'),...
-                    fullfile(librarydir, 'Wire','src'),...
-                    fullfile(librarydir, 'Wire','src','utility'),...
-                    fullfile(current_dir,'..','src')};
-                buildInfo.addSourcePaths(srcPaths);
+%                 srcPaths = {...
+%                     fullfile(librarydir, 'Wire'), ...
+%                     fullfile(librarydir, 'Wire', 'utility'),...
+%                     fullfile(librarydir, 'Wire','src'),...
+%                     fullfile(librarydir, 'Wire','src','utility'),...
+%                     fullfile(current_dir,'..','src')};
+%                 buildInfo.addSourcePaths(srcPaths);
+                buildInfo.addSourcePaths(fullfile(librarydir, 'Wire'));
+                buildInfo.addSourcePaths(fullfile(librarydir, 'Wire','src'));
+                buildInfo.addSourcePaths(fullfile(current_dir,'..','src'));
+                if(exist(fullfile(librarydir, 'Wire', 'utility'))), buildInfo.addSourcePaths(fullfile(librarydir, 'Wire', 'utility'));end
+                if(exist(fullfile(librarydir, 'Wire','src','utility'))),buildInfo.addSourcePaths(fullfile(librarydir, 'Wire','src','utility'));end
+
+                
                 
                 % add the source files
                 srcFiles = {'Wire.cpp', 'twi.c', 'I2Cdev.cpp', 'MPU6050.cpp', 'MPU6050wrapper.cpp'};

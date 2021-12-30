@@ -146,7 +146,7 @@ classdef soHCSR04Sonar < matlab.System & coder.ExternalDependency
                 % Add include paths and source files for code generation
 
                 % determine path to arduino IDE
-                try codertarget.target.isCoderTarget(buildInfo.ModelName)
+                try %codertarget.target.isCoderTarget(buildInfo.ModelName)
                     % we are in 15b
                     [~, hardwaredir] = codertarget.arduinobase.internal.getArduinoIDERoot('hardware');
                     librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');

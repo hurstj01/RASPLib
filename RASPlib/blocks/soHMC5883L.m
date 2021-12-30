@@ -82,7 +82,7 @@ classdef soHMC5883L < matlab.System & coder.ExternalDependency
                 % Add include paths and source files for code generation
                                 
                 % determine path to arduino IDE
-                try codertarget.target.isCoderTarget(buildInfo.ModelName)
+                try %codertarget.target.isCoderTarget(buildInfo.ModelName)
                     % we are in 15b
                     [~, hardwaredir] = codertarget.arduinobase.internal.getArduinoIDERoot('hardware');
                     librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');
@@ -109,13 +109,11 @@ classdef soHMC5883L < matlab.System & coder.ExternalDependency
                 %fullfile(librarydir, 'Wire','src','utility'),...
 				
                 % add the source paths
-                srcPaths = {...
-                    fullfile(librarydir, 'Wire'), ...
-                    fullfile(librarydir, 'Wire', 'utility'),...
-                    fullfile(librarydir, 'Wire','src'),...
-                    fullfile(librarydir, 'Wire','src','utility'),...
-                    fullfile(current_dir,'..','src')};
-                buildInfo.addSourcePaths(srcPaths);
+                buildInfo.addSourcePaths(fullfile(librarydir, 'Wire'));
+                buildInfo.addSourcePaths(fullfile(librarydir, 'Wire','src'));
+                buildInfo.addSourcePaths(fullfile(current_dir,'..','src'));
+                if(exist(fullfile(librarydir, 'Wire', 'utility'))), buildInfo.addSourcePaths(fullfile(librarydir, 'Wire', 'utility'));end
+                if(exist(fullfile(librarydir, 'Wire','src','utility'))),buildInfo.addSourcePaths(fullfile(librarydir, 'Wire','src','utility'));end
                 
                 % add the source files
                 srcFiles = {'Wire.cpp', 'twi.c', 'I2Cdev.cpp', 'HMC58X3.cpp', 'HMC58X3wrapper.cpp'};
