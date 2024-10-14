@@ -75,7 +75,7 @@ classdef soMS5611BaroPT < matlab.System & coder.ExternalDependency
                 try %codertarget.target.isCoderTarget(buildInfo.ModelName)
                     % we are in 15b
                     [~, hardwaredir] = codertarget.arduinobase.internal.getArduinoIDERoot('hardware');
-                    librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');
+                    if(strfind(hardwaredir,'aCLI')),disp('New aCLI library structure');librarydir = fullfile(hardwaredir, 'avr', '1.8.3', 'libraries');else,librarydir = fullfile(hardwaredir, 'arduino', 'avr' , 'libraries');end
                 catch me
                     % we are pre 15b
                     [~, hardwaredir] = realtime.internal.getArduinoIDERoot('hardware');
